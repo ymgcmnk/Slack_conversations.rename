@@ -1,20 +1,19 @@
-function setJoinChannels() {
+function setRenameChannels() {
   const lastRow = targetSheet.getLastRow();
-  const values = targetSheet.getRange(1, 1, lastRow, 1).getValues();
-  const channelIDs = values.flat();
-  console.log(channelIDs);
-  return
-  channelIDs.forEach(channelID => joinChannel(channelID));
+  const values = targetSheet.getRange(1, 1, lastRow, 2).getValues();
+
+  values.forEach(value => renameChannel(value[0], value[1]));
 }
 
-function renameChannel(channelID,channelName) {
+
+function renameChannel(channelID, channelName) {
   const options = {
-    "method": "get",
+    "method": "post",
     "contentType": "application/x-www-form-urlencoded",
     "payload": {
-      "token": botUserOAuthToken,
+      "token": userOAuthToken,
       "channel": channelID,
-      "name": name
+      "name": channelName
     }
   }
   const url = 'https://slack.com/api/conversations.rename';
