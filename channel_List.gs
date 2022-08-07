@@ -2,64 +2,19 @@
 // https://shiimanblog.com/engineering/public-channels/#toc9
 
 
-
-
 /**
  * Main Execution method.
  * 実行メソッド.
  */
 function setChannelInfo() {
-  deleteSpredsheetList();
-  // users = getSlackUsers();
   public_channels = getChannelList("public_channel");
-  for (let i = 0; i < public_channels.length; i++) {
-    sheet.getRange(i + 5, 2).setValue(public_channels[i].name);
-    sheet.getRange(i + 5, 3).setValue(public_channels[i].id);
-    // sheet.getRange(i + 5, 3).setValue(public_channels[i].topic.value);
-    sheet.getRange(i + 5, 4).setValue(public_channels[i].purpose.value);
-    // for (let j = 0; j < users.length; j++) {
-    //   if (users[j].id == public_channels[i].creator) {
-    //     sheet.getRange(i + 5, 5).setValue(users[j].real_name + "(" + users[j].name + ")");
-    //     break;
-    //   }
-    // }
-  }
-  sheet.getRange(2, 5).setValue(public_channels.length);
-}
-
-// // slackユーザ取得.
-// function getSlackUsers() {
-//   let options = {
-//     "method": "get",
-//     "contentType": "application/x-www-form-urlencoded",
-//     "payload": {
-//       "token": token
-//     }
-//   }
-//   // 必要scope = users:read.
-//   let url = 'https://slack.com/api/users.list';
-//   let response = UrlFetchApp.fetch(url, options);
-//   let obj = JSON.parse(response);
-//   return obj.members;
-// }
-
-
-
-/**
- * Function to delete a spreadsheet values
- * チャンネルリストを消し込む.
- */
-function deleteSpredsheetList() {
-
-  const deleteLength = 2000;   // 削除するレコード数.
-
-  for (let i = 0; i < deleteLength; i++) {
-    sheet.getRange(i + 5, 2).setValue("")
-    sheet.getRange(i + 5, 3).setValue("")
-    sheet.getRange(i + 5, 4).setValue("")
-    sheet.getRange(i + 5, 5).setValue("")
-  }
-  sheet.getRange(2, 5).setValue(0);
+  const public_channels_array = public_channels.map(channel => [channel.id, channel.name, channel.topic.value, channel.purpose.value]);
+  const headers = ["channel.id", "channel.name", "channel.topic.value", "channel.purpose.value"];
+  public_channels_array.unshift(headers)
+  const today = Utilities.formatDate(new Date(), 'JST', 'YYYYMMdd_HH:mm:ss');
+  const newSheet = ss.insertSheet();
+  newSheet.setName("channelList_"+today);
+  newSheet.getRange(1, 1, public_channels_array.length, public_channels_array[0].length).setValues(public_channels_array);
 }
 
 
